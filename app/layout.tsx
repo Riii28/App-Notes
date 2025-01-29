@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
 import '@/styles/App.css';
+import '@/fontawesome.config'
 import { ReactNode } from "react";
 import { Poppins } from 'next/font/google'
+import type { Metadata } from 'next';
 
 const poppins = Poppins({
     weight: ['100', '200', '300', '400'],
@@ -9,8 +10,7 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-    title: 'App Notes',
-    description: 'Notes that help your day'
+    title: 'Notes'
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

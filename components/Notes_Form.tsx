@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import dayjs from "dayjs"
-import { Toaster } from "react-hot-toast"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck } from "@fortawesome/free-solid-svg-icons"
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import toast, { Toaster } from "react-hot-toast"
+import Loading from "./Spinner"
 
 interface Note {
     title: string
@@ -14,7 +14,8 @@ interface Note {
     createdAt: string
 }
 
-export default function NotesForm({ note, noteID }: { note: Note | null , noteID: string | null }) {
+export default function NotesForm({ note, noteID, userID }: { note: Note | null , noteID: string | null, userID: string | null }) {
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
     const [state, setState] = useState<Note>({
         title: note?.title || '',
@@ -24,8 +25,11 @@ export default function NotesForm({ note, noteID }: { note: Note | null , noteID
 
     async function handleSave() {
         if (!state.title.trim() || !state.content.trim()) {
+            toast.error('Notes cannot be empty')
             return
         }
+
+        setLoading(true)
 
         try {
             const response = await fetch(`/api/notes${noteID ? `?id=${noteID}` : ''}`, {
@@ -35,27 +39,34 @@ export default function NotesForm({ note, noteID }: { note: Note | null , noteID
                     title: state.title,
                     content: state.content,
                     createdAt: state.createdAt,
+                    userId: userID
                 })
             })
 
             if (!response.ok) {
+                toast.error('Internal server error')
                 return
             }
 
             const result = await response.json()
 
             if (!result.success) {
+                toast.error(result.message)
                 return
             }
 
             router.push('/home')
         } catch (err) {
+            toast.error('Check your connections')
             return
+        } finally {
+            setLoading(false)
         }
     }
     
     return (
         <>
+            <Toaster position="top-center" reverseOrder={false} />
             <input
                 value={state.title}
                 onChange={(e) => setState({ ...state, title: e.target.value })}
@@ -74,9 +85,13 @@ export default function NotesForm({ note, noteID }: { note: Note | null , noteID
             />
             <button
                 onClick={handleSave}
+                className="fixed bottom-20 right-14"
             >   
-             save
-                <FontAwesomeIcon size="xl" icon={faCheck} />
+                {loading ? (
+                    <Loading addStyle={'fill-dark-100 h-10 w-10'} />
+                ) : (
+                    <FontAwesomeIcon size="2xl" icon={faCheck} />
+                )}
             </button>            
         </>
     )

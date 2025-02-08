@@ -19,6 +19,7 @@
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
     "firebase": "^11.2.0",
+    "firebase-admin": "^13.0.2",
     "framer-motion": "^11.18.1",
     "next": "15.1.5",
     "next-auth": "^4.24.11",

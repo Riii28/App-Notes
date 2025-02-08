@@ -1,50 +1,51 @@
 'use client'
 
 import { useAppState } from "@/store/app_state";
-import { faFolderBlank, faHome, faFolderOpen, faHomeUser } from "@fortawesome/free-solid-svg-icons";
+import { faFolderBlank, faHome, faFolderOpen, faHomeUser, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react";
-import FabButton from "./Fab_Button";
 
 export default function Footer() {
     const pathname = usePathname()
-    const { activePage, setActivePage } = useAppState()
-
-    useEffect(() => {
-        setActivePage(pathname)
-    }, [pathname, setActivePage])
-
-    const isActive = (path: string) => activePage === path
+    const { push } = useRouter()
+    const { setFolderFormState } = useAppState()
 
     return (
         <>
-            <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 bg-light-200 rounded-t-xl">
+            <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center h-20">
                 <Link
-                    className={`${isActive('/home') ? 'text-200' : 'text-dark-200'} flex flex-col items-center transition-colors duration-200`}
+                    className={`${pathname === '/home' ? 'text-100' : 'text-dark-200 dark:text-light-200'} flex flex-col items-center transition-colors duration-200 active:scale-95`}
                     href={'/home'}
                 >
                     <FontAwesomeIcon 
-                        icon={isActive('/home') ? faHomeUser : faHome} 
+                        icon={pathname === '/home' ? faHomeUser : faHome} 
                         size="lg"
                         cursor='pointer'
                     />
                     <h1>Home</h1>
                 </Link>
-                <Link 
-                    className={`${isActive('/folder') ? 'text-200' : 'text-dark-200'} flex flex-col items-center transition-colors duration-200`}
+                <Link
+                    className={`${pathname === '/folder' ? 'text-100' : 'text-dark-200 dark:text-light-200'} flex flex-col items-center transition-colors duration-200 active:scale-95`}
                     href={'/folder'}
                 >
                     <FontAwesomeIcon 
-                        icon={isActive('/folder') ? faFolderOpen : faFolderBlank} 
+                        icon={pathname === '/folder' ? faFolderOpen : faFolderBlank} 
                         size="lg"
                         cursor='pointer'
                     />
                     <h1>Folder</h1>
                 </Link>
+                <button className="fixed right-10 bottom-32 cursor-pointer active:scale-95">
+                    <FontAwesomeIcon 
+                        icon={faPlus}
+                        size="2xl"
+                        className="p-2 bg-100 shadow-md rounded-[50%]"
+                        onClick={() => pathname === '/home' ? push('/set-notes') : setFolderFormState() }
+                    />
+                </button>  
             </nav>
-            <FabButton />
         </>
     )
 }

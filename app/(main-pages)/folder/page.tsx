@@ -1,7 +1,13 @@
+import FoldersForm from "@/components/Folders_Form";
+
 export default function Folder() {
     return (
-        <div>
-            <h1>Hello ini folder</h1>
-        </div>
+        <main className="flex flex-col gap-y-4">
+            <FoldersForm />
+            <div>
+                <div>tes</div>
+                <div></div>
+            </div>
+        </main>
     )
 }

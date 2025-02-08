@@ -1,12 +1,29 @@
+
+// export default function SignIn() {
+//     return (
+//         <div className="h-screen w-screen flex justify-center items-center">
+//             <div className="flex h-96">
+//                 <div className="w-96 rounded-l-md p-4 bg-100">
+//                     <h1 className="font-bold">Welcome back!</h1>
+//                 </div>
+//                 <div className="w-96 rounded-r-md p-4 bg-400">
+//                     <h1>Right side</h1>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
 'use client'
 
+import { useTheme } from "@/store/theme"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
-interface SignInData {
+interface Data {
     email: string
     password: string
 }
@@ -15,9 +32,10 @@ export default function SignIn() {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
     const router = useRouter()
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<SignInData>()
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<Data>()
+    const { syncTheme } = useTheme()
 
-    const onSubmit: SubmitHandler<SignInData> = async (data: SignInData) => {
+    async function onSubmit(data: Data) {
         setLoading(true)
         try {
             const response = await signIn('credentials', {
@@ -33,9 +51,9 @@ export default function SignIn() {
             }
 
             reset()
-            router.push('/home')
             setMessage('Success')
-            
+            router.push('/home')
+            syncTheme()
         } catch (err) {
             throw new Error('Error during sign-in')
         } finally {
@@ -45,9 +63,8 @@ export default function SignIn() {
 
     return (
         <div className="h-screen w-screen flex justify-center items-center">
-            <Link className="fixed top-5 left-5" href={'/'}>Return</Link>
             <div className="w-80 bg-light shadow-md rounded-md p-4">
-                <h1 className="font-bold text-2xl">Login</h1>
+                <h1 className="font-bold text-2xl">Welcome back!</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-2 mt-6">
                     <label htmlFor="email">Email:</label>
                     <input 
@@ -55,8 +72,8 @@ export default function SignIn() {
                         id="email"
                         placeholder="Your email"
                         autoComplete="off"
-                        autoFocus
-                        className="px-2 py-1 rounded-md outline-none"
+                        className="px-2 py-1 rounded-md outline-none text-dark-300"
+                        disabled={loading}
                         {...register("email", { 
                             required: "Email is required", 
                             pattern: {
@@ -72,7 +89,8 @@ export default function SignIn() {
                         type="password" 
                         id="password"
                         placeholder="Your password"
-                        className="px-2 py-1 rounded-md outline-none"
+                        className="px-2 py-1 rounded-md outline-none text-dark-300"
+                        disabled={loading}
                         {...register("password", { 
                             required: "Password is required" 
                         })}
@@ -83,7 +101,7 @@ export default function SignIn() {
 
                     <button type="submit" className="mt-4 rounded-md px-2 py-1 bg-100">
                         {loading ? (
-                            '...Loading'
+                            'Loading...'
                         ) : (
                             'Sign in'
                         )}

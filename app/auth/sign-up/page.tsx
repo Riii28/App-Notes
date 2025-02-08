@@ -3,9 +3,9 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
-interface SignUpData {
+interface Data {
     fullname: string
     email: string
     password: string
@@ -14,10 +14,10 @@ interface SignUpData {
 export default function SignUp() {
     const [message, setMessage] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
-    const { register, handleSubmit, reset, formState: {errors} } = useForm<SignUpData>()
+    const { register, handleSubmit, reset, formState: {errors} } = useForm<Data>()
     const router = useRouter()
 
-    const onSubmit: SubmitHandler<SignUpData> = async (data: SignUpData) => { 
+    async function onSubmit(data: Data) { 
         setLoading(true)
 
         try {
@@ -33,15 +33,15 @@ export default function SignUp() {
 
             const result = await response.json()
 
-            if (!result.status) {
+            if (!result.success) {
                 setMessage(result.message)
                 return
             }
 
             reset()
             router.push('/auth/sign-in')
-        } catch (err) {
-            throw new Error('Error during registration')
+        } catch (err: any) {
+            console.error(err.message)
         } finally {
             setLoading(false)
         }
@@ -49,18 +49,17 @@ export default function SignUp() {
 
     return (
         <div className="h-screen w-screen flex justify-center items-center">
-            <Link className="fixed top-5 left-5 px-4 py-1 rounded-md" href={'/'}>Return</Link>
             <div className="w-80 bg-light shadow-md rounded-md p-4">
-                <h1 className="font-bold text-2xl">Register</h1>
+                <h1 className="font-bold text-2xl">Create an account</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-2 mt-12 text-dark-300">
                     <label htmlFor="fullname">Name:</label>
                     <input 
                         type="text" 
                         id="fullname"
                         placeholder="Your fullname"
-                        className="px-2 py-1 rounded-md outline-none"
+                        className="px-2 py-1 rounded-md outline-none text-dark-300"
                         autoComplete="off"
-                        autoFocus
+                        disabled={loading}
                         {...register("fullname", { 
                             required: "Fullname is required", 
                             maxLength: {
@@ -76,8 +75,9 @@ export default function SignUp() {
                         type="email" 
                         id="email"
                         placeholder="Your email"
-                        className="px-2 py-1 rounded-md outline-none"
+                        className="px-2 py-1 rounded-md outline-none text-dark-300"
                         autoComplete="off"
+                        disabled={loading}
                         {...register("email", {
                             required: "Email is required",
                             pattern: {
@@ -93,7 +93,8 @@ export default function SignUp() {
                         type="password" 
                         id="password"
                         placeholder="Your password"
-                        className="px-2 py-1 rounded-md outline-none"
+                        className="px-2 py-1 rounded-md outline-none text-dark-300"
+                        disabled={loading}
                         {...register("password", {
                             required: "Password is required",
                             minLength: {
@@ -108,7 +109,7 @@ export default function SignUp() {
 
                     <button className="mt-4 rounded-md px-2 py-1 bg-100">
                         {loading ? (
-                            '...Loading'
+                            'Loading...'
                         ) : (
                             'Sign up'
                         )}

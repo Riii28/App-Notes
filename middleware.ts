@@ -2,8 +2,8 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-    const token = await getToken({ req: request, secret: process.env.JWT_SECRET });
-    const { pathname } = request.nextUrl; // Mendapatkan URL path
+    const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
+    const { pathname } = request.nextUrl
 
     if (!token && pathname !== "/") {
         return NextResponse.redirect(new URL("/", request.url))
@@ -13,11 +13,11 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/home", request.url))
     }
 
-    return NextResponse.next();
+    return NextResponse.next()
 }
 
 export const config = {
     matcher: [
-        "/((?!_next|api|favicon.ico|auth).*)", // Lindungi semua halaman kecuali yang dikecualikan
+        "/((?!_next|api|favicon.ico|auth).*)"
     ],
 }

@@ -51,59 +51,59 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-    const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
-    const searchParams = request.nextUrl.searchParams
-    const noteID = searchParams.get('id')
+    try {
+        const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
+        const searchParams = request.nextUrl.searchParams
+        const noteID = searchParams.get('id')
 
-    if (!token) {
-        return NextResponse.json({
-            success: false,
-            message: 'Unauthorized access'
-        })
-    }
-
-    const userID: any = token.id
-
-    if (!userID) {
-        return NextResponse.json({
-            success: false,
-            message: 'User ID not found'
-        })
-    }
-
-    if (noteID) {
-        try {
-            const noteDoc = await db
-                .collection('users')
-                .doc(userID)
-                .collection('notes')
-                .doc(noteID)
-                .get()
-                
-            if (!noteDoc.exists) {
-                return NextResponse.json({
-                    success: false,
-                    message: 'Note not found'
-                })
-            }
-    
-            return NextResponse.json({ 
-                success: true, 
-                message: 'Success to fetch', 
-                data: {
-                    id: noteDoc.id, 
-                    ...noteDoc.data()
-                } 
-            })    
-        } catch (err) {
+        if (!token) {
             return NextResponse.json({
                 success: false,
-                message: 'Internal server error'
+                message: 'Unauthorized access'
             })
         }
-    }
 
-    try {
+        const userID: any = token.id
+
+        if (!userID) {
+            return NextResponse.json({
+                success: false,
+                message: 'User ID not found'
+            })
+        }
+
+        if (noteID) {
+            try {
+                const noteDoc = await db
+                    .collection('users')
+                    .doc(userID)
+                    .collection('notes')
+                    .doc(noteID)
+                    .get()
+                    
+                if (!noteDoc.exists) {
+                    return NextResponse.json({
+                        success: false,
+                        message: 'Note not found'
+                    })
+                }
+        
+                return NextResponse.json({ 
+                    success: true, 
+                    message: 'Success to fetch', 
+                    data: {
+                        id: noteDoc.id, 
+                        ...noteDoc.data()
+                    } 
+                })    
+            } catch (err) {
+                return NextResponse.json({
+                    success: false,
+                    message: 'Internal server error'
+                })
+            }
+        }
+
         const notesSnapshot = await db
             .collection('users')
             .doc(userID)

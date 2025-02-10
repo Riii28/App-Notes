@@ -21,7 +21,7 @@ export default function UserDropdown() {
             <motion.div
                 initial='initial'
                 animate='animate'
-                variants={variants.userDropdown}
+                variants={variants.fadeIn}
                 className='fixed top-36 right-4 bg-white divide-y divide-gray-100 rounded-lg shadow-md w-44 dark:bg-gray-700 dark:divide-gray-600'
             >
                 <div className="px-4 py-3 truncate">
@@ -46,7 +46,7 @@ export default function UserDropdown() {
                         onClick={toggleTheme}
                         className="cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
-                        {theme === 'light' ? 'Light mode 💡' : 'Dark mode 🌑'}
+                        {theme === 'light' ? 'Light mode' : 'Dark mode'}
                     </p>
                 </div>
                 <div className="py-1">

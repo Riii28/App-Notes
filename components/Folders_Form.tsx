@@ -3,9 +3,12 @@
 import { useAppState } from "@/store/app_state"
 import { variants } from "@/utils/transitions"
 import { motion } from 'framer-motion'
+import { useRouter } from "next/navigation"
 import { useState } from "react"
+import toast from "react-hot-toast"
 
 export default function FoldersForm() {
+    const { refresh } = useRouter()
     const [state, setState] = useState<string>('')
     const { folderFormState, setFolderFormState } = useAppState()
 
@@ -25,14 +28,15 @@ export default function FoldersForm() {
             const result = await response.json()
 
             if (!result.success) {
-                console.log(result.message)
+                toast.error(result.message)
                 return
             }
 
             setState('')
-
+            setFolderFormState()
+            refresh()
         } catch (err) {
-
+            
         }
     }
 
@@ -42,8 +46,8 @@ export default function FoldersForm() {
                 <motion.div
                     initial='initial' 
                     animate='animate'
-                    variants={variants.userDropdown}
-                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-y-6 bg-white w-80 p-4 rounded-md shadow-md"
+                    variants={variants.fadeIn}
+                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-y-6 bg-white dark:bg-gray-700 transition-colors duration-200 w-80 p-4 rounded-md shadow-md"
                 >
                     <h1 className="text-xl font-semibold">New folder</h1>
                     <div>

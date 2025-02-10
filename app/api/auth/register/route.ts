@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt'
 import { auth, db } from '@/lib/firebase/admin'
-import { serverTimestamp } from "firebase/firestore";
 
 interface UserRequest {
     fullname: string
@@ -10,9 +9,8 @@ interface UserRequest {
 }
 
 export async function POST(request: NextRequest) {
-    const { fullname, email, password } = await request.json() as UserRequest
-
     try {
+        const { fullname, email, password } = await request.json() as UserRequest
         const hashedPassword = await bcrypt.hash(password, 10)
 
         const existingUser = await auth.getUserByEmail(email).catch(() => null)
@@ -42,7 +40,7 @@ export async function POST(request: NextRequest) {
                 theme: 'light',
                 language: 'en',
             },
-            createdAt: serverTimestamp(),
+            createdAt: new Date().toISOString(),
         })
 
         return NextResponse.json({ 

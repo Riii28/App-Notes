@@ -1,14 +1,6 @@
-import NotesLists from "@/components/Notes_Lists";
 import { cookies } from "next/headers";
 
-interface Note {
-    id: string
-    title: string
-    content: string
-    createdAt: string
-}
-
-async function getNotes() {
+export async function getNotes() {
     const cookieStore = cookies()
 
     try {
@@ -36,14 +28,4 @@ async function getNotes() {
         console.error("Error fetching notes:", err)
         return
     }
-}
-
-export default async function Home() {
-    const notes: Note[] = await getNotes()
-
-    return (
-        <main className="flex flex-col gap-y-4">
-            <NotesLists notes={notes} />
-        </main>
-    );
 }

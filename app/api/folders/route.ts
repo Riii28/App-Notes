@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/firebase/admin";
 import { getToken } from "next-auth/jwt";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: NextRequest) {
     try {
@@ -30,11 +31,32 @@ export async function POST(request: NextRequest) {
             })
         }
 
+        const existingFolder = await db
+            .collection('users')
+            .doc(userID)
+            .collection('folders')
+            .where('name', '==', folder)
+            .get()
+
+        if (!existingFolder.empty) {
+            return NextResponse.json({
+                success: false,
+                message: 'Folder name already exsists'
+            })
+        }
+        
+        const folderData = { 
+            name: folder, 
+            createdAt: new Date().toISOString() 
+        }
+
         await db
             .collection('users')
             .doc(userID)
             .collection('folders')
-            .add({ folder })
+            .add(folderData)
+
+        revalidatePath('/folders')
 
         return NextResponse.json({
             success: true,
@@ -44,6 +66,50 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             success: false,
             message: 'Internal server error!'
+        })
+    }
+}
+
+export async function GET(request: NextRequest) {
+    try {
+        const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
+
+        if (!token) {
+            return NextResponse.json({
+                success: false,
+                message: 'Unauthorized access'
+            })
+        }
+
+        const userID: any = token.id
+
+        if (!userID) {
+            return NextResponse.json({
+                success: false,
+                message: 'User ID not found'
+            })
+        }
+
+        const foldersSnapshot = await db
+            .collection('users')
+            .doc(userID)
+            .collection('folders')
+            .get()
+
+        const folders = foldersSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+
+        return NextResponse.json({
+            success: true,
+            message: 'Get folder success',
+            data: folders
+        })
+    } catch (err) {
+        return NextResponse.json({
+            success: false,
+            message: 'Internal server error'
         })
     }
 }

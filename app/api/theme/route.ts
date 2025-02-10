@@ -1,7 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/firebase/admin";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { getToken } from "next-auth/jwt";
 
 export async function GET(request: NextRequest) {

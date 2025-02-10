@@ -11,7 +11,7 @@ export default function Header({ title }: { title: ReactNode }) {
     const { setSettingState, setSelectState } = useAppState()    
 
     return (
-        <header className="fixed top-0 left-0 w-full h-36 flex justify-between p-4 bg-light-200 dark:bg-dark-100 rounded-b-xl">
+        <header className="fixed top-0 left-0 w-full h-36 flex justify-between p-4 bg-light-200 dark:bg-dark-100 transition-colors duration-200 rounded-b-xl">
             <div>
                 <h1 className="text-4xl font-bold">{ title }</h1>
                 <h3 className="text-sm text-dark-300 mt-4">Organize your day</h3>

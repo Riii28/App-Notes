@@ -5,7 +5,6 @@ import { faFolderBlank, faHome, faFolderOpen, faHomeUser, faPlus } from "@fortaw
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"
-import { useEffect } from "react";
 
 export default function Footer() {
     const pathname = usePathname()
@@ -14,7 +13,7 @@ export default function Footer() {
 
     return (
         <>
-            <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center h-20">
+            <nav className="fixed bottom-0 left-0 w-full flex justify-around bg-light-200 dark:bg-dark-100 items-center h-20 z-50">
                 <Link
                     className={`${pathname === '/home' ? 'text-100' : 'text-dark-200 dark:text-light-200'} flex flex-col items-center transition-colors duration-200 active:scale-95`}
                     href={'/home'}
@@ -27,11 +26,11 @@ export default function Footer() {
                     <h1>Home</h1>
                 </Link>
                 <Link
-                    className={`${pathname === '/folder' ? 'text-100' : 'text-dark-200 dark:text-light-200'} flex flex-col items-center transition-colors duration-200 active:scale-95`}
-                    href={'/folder'}
+                    className={`${pathname === '/folders' ? 'text-100' : 'text-dark-200 dark:text-light-200'} flex flex-col items-center transition-colors duration-200 active:scale-95`}
+                    href={'/folders'}
                 >
                     <FontAwesomeIcon 
-                        icon={pathname === '/folder' ? faFolderOpen : faFolderBlank} 
+                        icon={pathname === '/folders' ? faFolderOpen : faFolderBlank} 
                         size="lg"
                         cursor='pointer'
                     />

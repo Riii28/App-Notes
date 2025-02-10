@@ -7,7 +7,7 @@ export default function Welcome() {
                 <h1 className="text-4xl font-bold">Welcome to my application!</h1>
                 <h3 className="text-2xl mb-4">To get started, please register</h3>
                 <Link 
-                    href={'/auth/sign-in'} 
+                    href={'/auth/sign-up'} 
                     className="px-4 py-1 bg-100 rounded-md"
                 >
                     Register

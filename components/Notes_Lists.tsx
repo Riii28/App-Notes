@@ -53,15 +53,15 @@ export default function NotesLists({ notes }: { notes: Notes[] }) {
 
     return (
         <div className="flex flex-col gap-y-4">
-            {notes.length > 0 ? (
-                notes.map((note: Notes) => (
+            {notes?.length > 0 ? (
+                notes?.map((note: Notes) => (
                     <div
                         key={note.id} 
                         className="flex"
                     >
                         <Link 
                             href={`/set-notes?id=${note.id}`}
-                            className="flex-1 bg-400 p-2 rounded-md overflow-hidden"
+                            className="flex-1 bg-400 dark:bg-dark-200 transition-colors duration-200 p-2 rounded-md overflow-hidden"
                         >
                             <h1 className="truncate">{note.title}</h1>
                             <p className="text-sm text-dark-300">{note.createdAt}</p>

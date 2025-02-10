@@ -1,4 +1,5 @@
 import '@/styles/App.css';
+import '@/styles/component.css'
 import '@/fontawesome.config'
 import { ReactNode } from "react";
 import { Poppins } from 'next/font/google'

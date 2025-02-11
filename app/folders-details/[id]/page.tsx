@@ -12,7 +12,7 @@ async function getDetailFolder(id: string) {
     try {
         const cookieStore = cookies()
 
-        const response: Response = await fetch(`http://localhost:3000/folders/details?id=${id}`, {
+        const response: Response = await fetch(`http://localhost:3000/api/folders/details?id=${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default async function FolderDetails({ params }: { params: Promise<{ id: 
 
     return (
         <section>
-            <NotesLists notes={notes}/>
+            <NotesLists notes={notes} folderID={id}/>
         </section>
     )
 }

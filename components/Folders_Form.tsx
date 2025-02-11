@@ -35,19 +35,20 @@ export default function FoldersForm() {
             setState('')
             setFolderFormState()
             refresh()
+            toast.success('Folder added!')
         } catch (err) {
-            
+            console.error(err)
         }
     }
 
     return (
         folderFormState && (
-            <div className="fixed w-full h-full z-10">
+            <div className="fixed w-full h-full z-50 bg-transparent">
                 <motion.div
                     initial='initial' 
                     animate='animate'
                     variants={variants.fadeIn}
-                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-y-6 bg-white dark:bg-gray-700 transition-colors duration-200 w-80 p-4 rounded-md shadow-md"
+                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-y-8 bg-white dark:bg-gray-800 transition-colors duration-200 w-80 p-4 rounded-md shadow-md"
                 >
                     <h1 className="text-xl font-semibold">New folder</h1>
                     <div>
@@ -56,19 +57,20 @@ export default function FoldersForm() {
                             value={state}
                             type="text"
                             placeholder="Folder"
-                            className="outline-none border border-400 w-full p-2 rounded-md"
+                            maxLength={50}
+                            className="outline-none bg-light-200 w-full p-3 rounded-md dark:bg-dark-100"
                         />
                     </div>
-                    <div className="flex justify-end gap-x-6">
+                    <div className="flex justify-end gap-x-6 text-dark-300 dark:text-light-100">
                         <button
                             onClick={setFolderFormState}
-                            className="px-2 py-1 bg-400 rounded-md active:scale-95"
+                            className="px-4 py-1 bg-400 rounded-md active:scale-95 dark:bg-dark-200"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleAddFolder}
-                            className="px-2 py-1 bg-100 rounded-md active:scale-95"
+                            className="px-4 py-1 bg-100 rounded-md active:scale-95"
                         >
                             Add
                         </button>

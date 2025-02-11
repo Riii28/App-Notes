@@ -39,9 +39,10 @@ async function getNote(noteID: string | null): Promise<Note | null> {
     return result.data
 }
 
-export default async function SetNotes({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
+export default async function SetNotes({ searchParams }: { searchParams: Promise<{ id?: string, folderID?: string }> }) {
     const session = await getServerSession(authOptions)
     const userID = session?.user.id || null
+    const folderID = (await searchParams).folderID || null
     const noteID = (await searchParams).id || null
     const note = await getNote(noteID)
 
@@ -60,7 +61,7 @@ export default async function SetNotes({ searchParams }: { searchParams: Promise
             </header>
 
             <main className="mt-20 flex flex-col gap-y-3">
-                <NotesForm note={note} noteID={noteID} userID={userID}/>
+                <NotesForm note={note} noteID={noteID} userID={userID} folderID={folderID}/>
             </main>
         </section>
     )

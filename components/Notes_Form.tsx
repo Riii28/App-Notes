@@ -14,7 +14,7 @@ interface Note {
     createdAt: string
 }
 
-export default function NotesForm({ note, noteID, userID }: { note: Note | null , noteID: string | null, userID: string | null }) {
+export default function NotesForm({ note, noteID, userID, folderID }: { note: Note | null , noteID: string | null, userID: string | null, folderID: string | null }) {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const [state, setState] = useState<Note>({
@@ -32,7 +32,7 @@ export default function NotesForm({ note, noteID, userID }: { note: Note | null 
         setLoading(true)
 
         try {
-            const response = await fetch(`/api/notes${noteID ? `?id=${noteID}` : ''}`, {
+            const response = await fetch(`/api/notes${noteID ? `?id=${noteID}${folderID ? `&folderID=${folderID}` : ''}` : ''}`, {
                 method: noteID ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

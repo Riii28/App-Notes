@@ -5,11 +5,13 @@ import { signOut, useSession } from "next-auth/react"
 import { motion } from "framer-motion"
 import { variants } from "@/utils/transitions"
 import { useTheme } from "@/store/theme"
+import { usePathname } from "next/navigation"
 
 export default function UserDropdown() {
     const { data: session } = useSession()
-    const { settingState } = useAppState()
+    const { settingState, setMoveToState } = useAppState()
     const { toggleTheme, theme } = useTheme()
+    const pathname = usePathname()
 
     const handleLogout = async () => {
         await signOut({ callbackUrl: '/auth/sign-in' })
@@ -22,7 +24,7 @@ export default function UserDropdown() {
                 initial='initial'
                 animate='animate'
                 variants={variants.fadeIn}
-                className='fixed top-36 right-4 bg-white divide-y divide-gray-100 rounded-lg shadow-md w-44 dark:bg-gray-700 dark:divide-gray-600'
+                className='fixed top-36 right-4 bg-white divide-y divide-gray-100 rounded-lg shadow-md w-44 dark:bg-gray-800 dark:divide-gray-600'
             >
                 <div className="px-4 py-3 truncate">
                     <h1 className="truncate">{session?.user.fullname}</h1>
@@ -48,6 +50,14 @@ export default function UserDropdown() {
                     >
                         {theme === 'light' ? 'Light mode' : 'Dark mode'}
                     </p>
+                    {pathname === '/home' ? (
+                        <p  
+                            onClick={setMoveToState}
+                            className="cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                        >
+                            Move to folder
+                        </p>
+                    ) : ''}
                 </div>
                 <div className="py-1">
                     <p

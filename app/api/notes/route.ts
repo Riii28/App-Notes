@@ -129,35 +129,39 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-    const { title, content, createdAt } = await request.json()
-    const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
-    const searchParams = request.nextUrl.searchParams
-    const noteID = searchParams.get('id')
-
-    if (!token) {
-        return NextResponse.json({
-            success: false,
-            message: 'Unauthorized access'
-        })
-    }
-
-    const userID: any = token.id
-
-    if (!userID) {
-        return NextResponse.json({
-            success: false,
-            message: 'User ID not found'
-        })
-    }
-
-    if (!noteID) {
-        return NextResponse.json({
-            success: false,
-            message: 'Note ID not found'
-        })
-    }
-
     try {
+        const { title, content, createdAt } = await request.json()
+        const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
+        const searchParams = request.nextUrl.searchParams
+        const noteID = searchParams.get('id')
+        const folderID = searchParams.get('folderID')
+
+        console.error('Ini adalah note ID:', noteID)
+        console.error('Ini adalah folder ID:', folderID)
+
+        if (!token) {
+            return NextResponse.json({
+                success: false,
+                message: 'Unauthorized access'
+            })
+        }
+
+        const userID: any = token.id
+
+        if (!userID) {
+            return NextResponse.json({
+                success: false,
+                message: 'User ID not found'
+            })
+        }
+
+        if (!noteID) {
+            return NextResponse.json({
+                success: false,
+                message: 'Note ID not found'
+            })
+        }
+
         const noteRef = db
             .collection('users')
             .doc(userID)
@@ -179,6 +183,42 @@ export async function PUT(request: NextRequest) {
             createdAt
         })
 
+        if (folderID) {
+            const folderRef = db
+                .collection('users')
+                .doc(userID)
+                .collection('folders')
+                .doc(folderID)
+        
+            const folderExists = await folderRef.get()
+        
+            if (!folderExists.exists) {
+                return NextResponse.json({
+                    success: false,
+                    message: 'Folder not found'
+                })
+            }
+        
+            const notesInFolder = folderRef
+                .collection('notes')
+                .doc(noteID)
+        
+            const folderDoc = await notesInFolder.get()
+        
+            if (!folderDoc.exists) {
+                return NextResponse.json({
+                    success: false,
+                    message: 'Note not found in folder'
+                })
+            }
+        
+            await notesInFolder.update({
+                title,
+                content,
+                createdAt
+            })
+        }
+                    
         return NextResponse.json({
             success: true,
             message: 'Note updated!'

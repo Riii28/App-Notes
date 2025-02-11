@@ -7,6 +7,10 @@ interface AppState {
     setSelectState: () => void
     folderFormState: boolean
     setFolderFormState: () => void
+    moveToState: boolean
+    setMoveToState: () => void
+    selectedNote: string | null
+    setSelectedNote: (id: string | null) => void
 }
 
 export const useAppState = create<AppState>((set) => ({
@@ -14,8 +18,14 @@ export const useAppState = create<AppState>((set) => ({
     setSettingState: () => set((state) => ({ settingState: !state.settingState})),
 
     selectState: false,
-    setSelectState: () => set((state) => ({ selectState: !state.selectState })),
+    setSelectState: () => set((state) => ({ selectState: !state.selectState, moveToState: false })),
 
     folderFormState: false,
-    setFolderFormState: () => set((state) => ({ folderFormState: !state.folderFormState }))
+    setFolderFormState: () => set((state) => ({ folderFormState: !state.folderFormState })),
+
+    moveToState: false,
+    setMoveToState: () => set((state) => ({ moveToState: !state.moveToState, settingState: false, selectState: false })),
+
+    selectedNote: null,
+    setSelectedNote: (id) => set({ selectedNote: id })
 }))

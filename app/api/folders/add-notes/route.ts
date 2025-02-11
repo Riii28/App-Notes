@@ -56,8 +56,6 @@ export async function POST(request: NextRequest) {
             .doc(noteID)
             .set(noteData)
 
-        await noteRef.delete()
-
         return NextResponse.json({
             success: true,
             message: 'Notes added to folder'

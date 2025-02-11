@@ -1,5 +1,6 @@
 import NotesLists from "@/components/Notes_Lists";
 import { getNotes } from "@/app/helpers/get_notes";
+import FoldersDropdown from "@/components/Folders_Dropdown";
 
 interface Note {
     id: string
@@ -13,6 +14,7 @@ export default async function Home() {
 
     return (
         <main className="flex flex-col gap-y-4">
+            <FoldersDropdown />
             <NotesLists notes={notes} />
         </main>
     );

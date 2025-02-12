@@ -20,10 +20,10 @@ export default function NotesLists({ notes, folderID }: { notes: Notes[], folder
     const [loading, setLoading] = useState(false)
     const { selectState, moveToState, setSelectedNote } = useAppState()
 
-    async function handleDeleteNotes(noteID: string) {
+    async function handleDeleteNotes(noteID: string, folderID?: string) {
         setLoading(true)
         try {
-            const response = await fetch(`/api/notes?id=${noteID}`, {
+            const response = await fetch(`/api/notes?id=${noteID}${folderID ? `&folderId=${folderID}` : ''}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 cache: 'force-cache'
@@ -71,7 +71,7 @@ export default function NotesLists({ notes, folderID }: { notes: Notes[], folder
                             </div>
                         )}
                         <Link 
-                            href={`/set-notes?id=${note.id}${folderID ? `&folderID=${folderID}` : ''}`}
+                            href={`/set-notes?id=${note.id}${folderID ? `&folderId=${folderID}` : ''}`}
                             className="flex-1 bg-400 dark:bg-dark-200 transition-colors duration-200 p-2 rounded-md overflow-hidden"
                         >
                             <h1 className="truncate">{note.title}</h1>
@@ -83,7 +83,7 @@ export default function NotesLists({ notes, folderID }: { notes: Notes[], folder
                                 className="flex w-14 justify-center items-center"
                             >
                                 <button
-                                    onClick={() => handleDeleteNotes(note.id)}
+                                    onClick={() => handleDeleteNotes(note.id, folderID)}
                                 >
                                     <FontAwesomeIcon 
                                         size="lg" 

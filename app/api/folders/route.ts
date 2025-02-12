@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/firebase/admin";
 import { getToken } from "next-auth/jwt";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export async function POST(request: NextRequest) {
     try {
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
             .collection('folders')
             .add(folderData)
 
-        revalidatePath('/folders')
+        revalidateTag('folders')
 
         return NextResponse.json({
             success: true,
@@ -111,5 +111,14 @@ export async function GET(request: NextRequest) {
             success: false,
             message: 'Internal server error'
         })
+    }
+}
+
+export async function PUT(request: NextRequest) {
+    try {
+        const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
+        const { name, folderID } = await request.json()
+    } catch (err) {
+
     }
 }

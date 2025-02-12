@@ -8,12 +8,6 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
     const pathname = usePathname()
     const { syncTheme, theme } = useTheme()
 
-    // useEffect(() => {
-    //     if (!['/', '/auth/sign-in', '/auth/sign-up'].includes(pathname)) {
-    //         syncTheme()
-    //     }
-    // }, [])
-
     useEffect(() => {
         const root = document.documentElement
         if (theme === 'dark') {

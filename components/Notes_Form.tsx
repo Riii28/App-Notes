@@ -32,7 +32,7 @@ export default function NotesForm({ note, noteID, userID, folderID }: { note: No
         setLoading(true)
 
         try {
-            const response = await fetch(`/api/notes${noteID ? `?id=${noteID}${folderID ? `&folderID=${folderID}` : ''}` : ''}`, {
+            const response = await fetch(`/api/notes${noteID ? `?id=${noteID}${folderID ? `&folderId=${folderID}` : ''}` : ''}`, {
                 method: noteID ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

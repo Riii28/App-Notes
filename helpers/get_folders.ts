@@ -10,7 +10,10 @@ export async function getFolders() {
                 'Content-Type': 'application/json',
                 'Cookie': (await cookieStore).toString()
             },
-            cache: 'force-cache'
+            cache: 'force-cache',
+            next: {
+                tags: ['folders']
+            }
         })
 
         if (!response.ok) {

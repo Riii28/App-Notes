@@ -1,6 +1,6 @@
 import FoldersForm from "@/components/Folders_Form";
 import FoldersLists from "@/components/Folders_Lists";
-import { getFolders } from "@/app/helpers/get_folders";
+import { getFolders } from "@/helpers/get_folders";
 
 interface Folder {
     id: string

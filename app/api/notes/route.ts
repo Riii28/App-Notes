@@ -1,6 +1,6 @@
 import { db } from "@/lib/firebase/admin";
 import { getToken } from "next-auth/jwt";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
             .doc(userID)
             .collection('notes')
             .add(noteData)
+
+        revalidateTag('notes')
 
         return NextResponse.json({
             success: true,
@@ -114,6 +116,8 @@ export async function GET(request: NextRequest) {
             id: doc.id,
             ...doc.data()
         }))
+
+        revalidateTag('notes')
     
         return NextResponse.json({
             success: true,
@@ -134,10 +138,7 @@ export async function PUT(request: NextRequest) {
         const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
         const searchParams = request.nextUrl.searchParams
         const noteID = searchParams.get('id')
-        const folderID = searchParams.get('folderID')
-
-        console.error('Ini adalah note ID:', noteID)
-        console.error('Ini adalah folder ID:', folderID)
+        const folderID = searchParams.get('folderId')
 
         if (!token) {
             return NextResponse.json({
@@ -183,6 +184,8 @@ export async function PUT(request: NextRequest) {
             createdAt
         })
 
+        revalidateTag('notes')
+
         if (folderID) {
             const folderRef = db
                 .collection('users')
@@ -217,6 +220,8 @@ export async function PUT(request: NextRequest) {
                 content,
                 createdAt
             })
+
+            revalidateTag('notes')
         }
                     
         return NextResponse.json({
@@ -232,34 +237,35 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-    const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
-    const searchParams = request.nextUrl.searchParams
-    const noteID = searchParams.get('id')
-
-    if (!token) {
-        return NextResponse.json({
-            success: false,
-            message: 'Unauthorized access'
-        })
-    }
-
-    const userID: any = token.id
-
-    if (!userID) {
-        return NextResponse.json({
-            success: false,
-            message: 'User ID not found'
-        })
-    }
-
-    if (!noteID) {
-        return NextResponse.json({
-            success: false,
-            message: 'Note ID not found'
-        })
-    }
-
     try {
+        const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
+        const searchParams = request.nextUrl.searchParams
+        const noteID = searchParams.get('id')
+        const folderID = searchParams.get('folderId')
+
+        if (!token) {
+            return NextResponse.json({
+                success: false,
+                message: 'Unauthorized access'
+            })
+        }
+
+        const userID: any = token.id
+
+        if (!userID) {
+            return NextResponse.json({
+                success: false,
+                message: 'User ID not found'
+            })
+        }
+
+        if (!noteID) {
+            return NextResponse.json({
+                success: false,
+                message: 'Note ID not found'
+            })
+        }
+
         const noteRef = db
             .collection('users')
             .doc(userID)
@@ -276,7 +282,7 @@ export async function DELETE(request: NextRequest) {
 
         await noteRef.delete()
 
-        revalidatePath('/home')
+        revalidateTag('notes')
 
         return NextResponse.json({
             success: true,

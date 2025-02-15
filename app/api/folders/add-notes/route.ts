@@ -57,8 +57,6 @@ export async function POST(request: NextRequest) {
             .doc(noteID)
             .set(noteData)
 
-        await noteRef.delete()
-
         revalidateTag('notes')
 
         return NextResponse.json({
@@ -66,6 +64,9 @@ export async function POST(request: NextRequest) {
             message: 'Notes added to folder'
         })
     } catch (err) {
-
+        return NextResponse.json({
+            success: false,
+            message: 'Internal server error'
+        })
     }
 }

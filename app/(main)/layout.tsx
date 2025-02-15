@@ -24,7 +24,7 @@ export default function PageLayout({ children }: { children: ReactNode }) {
                     }
                 }}
             />
-            <section className="mx-4 mt-40 mb-24">
+            <section className="mx-4 mt-40 mb-24 overflow-hidden">
                 <Header title={pathname === '/home' ? 'Notes' : 'Folders'}/>
                     { children }
                 <Footer />

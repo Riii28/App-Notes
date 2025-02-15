@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 
 export async function getNotes(noteID?: string | null) {
     const cookieStore = cookies()
-
+    
     try {
         const response = await fetch(`http://localhost:3000/api/notes${noteID ? `?id=${noteID}` : ''}`, {
             method: "GET",
@@ -20,7 +20,7 @@ export async function getNotes(noteID?: string | null) {
             return null
         }
 
-        const result = await response.json();
+        const result = await response.json()
 
         if (!result.success) {
             return null

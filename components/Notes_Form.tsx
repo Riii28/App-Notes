@@ -7,6 +7,8 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons"
 import { useRouter } from "next/navigation"
 import toast, { Toaster } from "react-hot-toast"
 import Loading from "./Spinner"
+import { motion } from "framer-motion"
+import { variants } from "@/utils/transitions"
 
 interface Note {
     title: string
@@ -14,7 +16,7 @@ interface Note {
     createdAt: string
 }
 
-export default function NotesForm({ note, noteID, userID, folderID }: { note: Note | null , noteID: string | null, userID: string | null, folderID: string | null }) {
+export default function NotesForm({ note, noteID }: { note: Note | null , noteID: string | null }) {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const [state, setState] = useState<Note>({
@@ -32,14 +34,13 @@ export default function NotesForm({ note, noteID, userID, folderID }: { note: No
         setLoading(true)
 
         try {
-            const response = await fetch(`/api/notes${noteID ? `?id=${noteID}${folderID ? `&folderId=${folderID}` : ''}` : ''}`, {
+            const response = await fetch(`/api/notes${noteID ? `?id=${noteID}` : ''}`, {
                 method: noteID ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     title: state.title,
                     content: state.content,
                     createdAt: state.createdAt,
-                    userId: userID
                 })
             })
 
@@ -65,7 +66,11 @@ export default function NotesForm({ note, noteID, userID, folderID }: { note: No
     }
     
     return (
-        <>
+        <motion.div
+            initial='initial'
+            animate='animate'
+            variants={variants.fadeIn}
+        >
             <Toaster position="top-center" reverseOrder={false} />
             <input
                 value={state.title}
@@ -93,6 +98,6 @@ export default function NotesForm({ note, noteID, userID, folderID }: { note: No
                     <FontAwesomeIcon size="2xl" icon={faCheck} />
                 )}
             </button>            
-        </>
+        </motion.div>
     )
 }

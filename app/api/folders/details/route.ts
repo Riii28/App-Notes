@@ -31,15 +31,15 @@ export async function GET(request: NextRequest) {
             })
         }
 
-        const noteSnapshot = await db
-            .collection('users')
+        const folderNotesSnap = await db
+            .collection("users")
             .doc(userID)
-            .collection('folders')
+            .collection("folders")
             .doc(folderID)
-            .collection('notes')
+            .collection("notes")
             .get()
-
-        const notes = noteSnapshot.docs.map((doc) => ({
+        
+        const notes = folderNotesSnap.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }))
@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
             message: 'Success to get notes',
             data: notes
         })
+
     } catch (err) {
         return NextResponse.json({
             success: false,

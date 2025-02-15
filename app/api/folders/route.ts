@@ -114,11 +114,71 @@ export async function GET(request: NextRequest) {
     }
 }
 
-export async function PUT(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
     try {
         const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
-        const { name, folderID } = await request.json()
-    } catch (err) {
+        const searchParams = request.nextUrl.searchParams
+        const folderID = searchParams.get('folderId')
 
+        if (!token) {
+            return NextResponse.json({
+                success: false,
+                message: 'Unauthorized access'
+            })
+        }
+
+        if (!folderID) {
+            return NextResponse.json({
+                success: false,
+                message: 'Folder ID not found'
+            })
+        }
+
+        const userID: any = token.id
+
+        if (!userID) {
+            return NextResponse.json({
+                success: false,
+                message: 'User ID not found'
+            })
+        }
+
+        const folderRef = db
+            .collection('users')
+            .doc(userID)
+            .collection('folders')
+            .doc(folderID)
+
+        const folderDoc = await folderRef.get()
+
+        if (!folderDoc.exists) {
+            return NextResponse.json({
+                success: false,
+                message: 'Folder not found'
+            })
+        }
+
+        const notesRef = folderRef.collection('notes')
+        const notesSnapshot = await notesRef.get()
+        const batch = db.batch()
+
+        notesSnapshot.forEach((doc) => {
+            batch.delete(doc.ref)
+        })
+
+        batch.delete(folderRef)
+        await batch.commit()  
+
+        revalidateTag('folders')
+
+        return NextResponse.json({
+            success: true,
+            message: 'Folder deleted!'
+        })
+    } catch (err) {
+        return NextResponse.json({
+            success: false,
+            message: 'Internal server error'
+        })
     }
 }

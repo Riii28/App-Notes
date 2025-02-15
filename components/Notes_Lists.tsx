@@ -1,12 +1,14 @@
 'use client'
 
 import { useAppState } from "@/store/app_state"
-import { faTrash, faRemove } from "@fortawesome/free-solid-svg-icons"
+import { faTrash, faCheckToSlot, faListCheck, faCheck, faL } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import toast from "react-hot-toast"
+import { motion } from "framer-motion"
+import { variants } from "@/utils/transitions"
 
 interface Notes {
     id: string
@@ -15,15 +17,13 @@ interface Notes {
     createdAt: string
 }
 
-export default function NotesLists({ notes, folderID }: { notes: Notes[], folderID?: string }) {    
+export default function NotesLists({ notes }: { notes: Notes[] }) {    
     const router = useRouter()
-    const [loading, setLoading] = useState(false)
-    const { selectState, moveToState, setSelectedNote } = useAppState()
+    const { selectState, moveToState, setSelectedNote, setSelectState } = useAppState()
 
-    async function handleDeleteNotes(noteID: string, folderID?: string) {
-        setLoading(true)
+    async function handleDeleteNotes(noteID: string) {
         try {
-            const response = await fetch(`/api/notes?id=${noteID}${folderID ? `&folderId=${folderID}` : ''}`, {
+            const response = await fetch(`/api/notes?id=${noteID}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 cache: 'force-cache'
@@ -41,13 +41,14 @@ export default function NotesLists({ notes, folderID }: { notes: Notes[], folder
                 return
             }
 
-            router.refresh()
             toast.success(result.message)
+            setSelectState()
+            router.refresh()
         } catch (err) {
             toast.error('Check your connection and try again')
             return
         } finally {
-            setLoading(false)
+            
         }
     }
 
@@ -57,40 +58,46 @@ export default function NotesLists({ notes, folderID }: { notes: Notes[], folder
                 notes?.map((note: Notes) => (
                     <div
                         key={note.id} 
-                        className="flex"
+                        className="flex "
                     >
                         {moveToState && (
-                            <div
+                            <motion.div
+                                initial='initial'
+                                animate='animate'
+                                variants={variants.showFromLeft}
                                 className="flex w-14 justify-center items-center"
                             >
-                                <button
+                               <FontAwesomeIcon 
                                     onClick={() => setSelectedNote(note.id)}
-                                >
-                                   Move
-                                </button>
-                            </div>
+                                    icon={faCheck}
+                                    cursor='pointer'
+                                    size="lg"
+                                    className="active:scale-95"
+                               />
+                            </motion.div>
                         )}
                         <Link 
-                            href={`/set-notes?id=${note.id}${folderID ? `&folderId=${folderID}` : ''}`}
-                            className="flex-1 bg-400 dark:bg-dark-200 transition-colors duration-200 p-2 rounded-md overflow-hidden"
+                            href={`/set-notes?id=${note.id}`}
+                            className="flex-1 bg-400 dark:bg-dark-200 transition-colors duration-200 p-2 rounded-md overflow-hidden active:scale-95"
                         >
                             <h1 className="truncate">{note.title}</h1>
                             <p className="text-sm text-dark-300">{note.createdAt}</p>
                             <p className="truncate max-w-96">{note.content}</p>
                         </Link>
                         {selectState && (
-                            <div
+                            <motion.div
+                                initial='initial'
+                                animate='animate'
+                                variants={variants.showFromRight}
                                 className="flex w-14 justify-center items-center"
                             >
-                                <button
-                                    onClick={() => handleDeleteNotes(note.id, folderID)}
-                                >
-                                    <FontAwesomeIcon 
-                                        size="lg" 
-                                        icon={faTrash} 
-                                    />
-                                </button>
-                            </div>
+                                <FontAwesomeIcon
+                                    onClick={() => handleDeleteNotes(note.id)}
+                                    size="lg" 
+                                    icon={faTrash} 
+                                    cursor='pointer'
+                                />
+                            </motion.div>
                         )}
                     </div>
                 ))                

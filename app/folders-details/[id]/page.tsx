@@ -11,8 +11,8 @@ interface Note {
 export default async function FolderDetails({ params }: { params: Promise<{ id: string }>}) {
     const id = (await params).id
     const notes: Note[] = await getDetailFolder(id)
-
+    
     return (
-        <NotesLists notes={notes} folderID={id}/>
+        <NotesLists notes={notes}/>
     )
 }

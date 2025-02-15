@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
             })
         }
 
-        if (!title || !content || !createdAt || !userId) {
+        if (!title || !content || !createdAt) {
             return NextResponse.json({
                 success: false,
                 message: 'Field cannot be empty'
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
             })
         }
 
-        const noteData = { title, content, createdAt, userId }
+        const noteData = { title, content, createdAt }
         await db
             .collection('users')
             .doc(userID)
@@ -138,7 +138,6 @@ export async function PUT(request: NextRequest) {
         const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
         const searchParams = request.nextUrl.searchParams
         const noteID = searchParams.get('id')
-        const folderID = searchParams.get('folderId')
 
         if (!token) {
             return NextResponse.json({
@@ -184,45 +183,21 @@ export async function PUT(request: NextRequest) {
             createdAt
         })
 
-        revalidateTag('notes')
-
-        if (folderID) {
-            const folderRef = db
-                .collection('users')
-                .doc(userID)
-                .collection('folders')
-                .doc(folderID)
+        const foldersSnapshot = await db
+            .collection('users')
+            .doc(userID)
+            .collection('folders')
+            .get()
         
-            const folderExists = await folderRef.get()
-        
-            if (!folderExists.exists) {
-                return NextResponse.json({
-                    success: false,
-                    message: 'Folder not found'
-                })
+        for (const folderDoc of foldersSnapshot.docs) {
+            const noteRefInFolder = folderDoc.ref.collection('notes').doc(noteID);
+            const noteInFolderDoc = await noteRefInFolder.get()
+            if (noteInFolderDoc.exists) {
+                await noteRefInFolder.update({ title, content, createdAt })
             }
-        
-            const notesInFolder = folderRef
-                .collection('notes')
-                .doc(noteID)
-        
-            const folderDoc = await notesInFolder.get()
-        
-            if (!folderDoc.exists) {
-                return NextResponse.json({
-                    success: false,
-                    message: 'Note not found in folder'
-                })
-            }
-        
-            await notesInFolder.update({
-                title,
-                content,
-                createdAt
-            })
-
-            revalidateTag('notes')
         }
+
+        revalidateTag('notes')
                     
         return NextResponse.json({
             success: true,
@@ -241,7 +216,6 @@ export async function DELETE(request: NextRequest) {
         const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
         const searchParams = request.nextUrl.searchParams
         const noteID = searchParams.get('id')
-        const folderID = searchParams.get('folderId')
 
         if (!token) {
             return NextResponse.json({
@@ -282,13 +256,26 @@ export async function DELETE(request: NextRequest) {
 
         await noteRef.delete()
 
+        const foldersSnapshot = await db
+            .collection('users')
+            .doc(userID)
+            .collection('folders')
+            .get()
+        
+        for (const folderDoc of foldersSnapshot.docs) {
+            const noteRefInFolder = folderDoc.ref.collection('notes').doc(noteID)
+            const noteInFolderDoc = await noteRefInFolder.get()
+            if (noteInFolderDoc.exists) {
+                await noteRefInFolder.delete()
+            }
+        }
+
         revalidateTag('notes')
 
         return NextResponse.json({
             success: true,
             message: 'Note deleted successfully!'
         })
-
     } catch (err) {
         return NextResponse.json({
             success: false,

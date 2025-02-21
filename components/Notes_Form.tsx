@@ -9,6 +9,8 @@ import toast, { Toaster } from "react-hot-toast"
 import Loading from "./Spinner"
 import { motion } from "framer-motion"
 import { variants } from "@/utils/transitions"
+import { useAppState } from "@/store/app_state"
+import { useTheme } from "@/store/theme"
 
 interface Note {
     title: string
@@ -17,8 +19,10 @@ interface Note {
 }
 
 export default function NotesForm({ note, noteID }: { note: Note | null , noteID: string | null }) {
+    const { theme } = useTheme()
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+
     const [state, setState] = useState<Note>({
         title: note?.title || '',
         content: note?.content || '',
@@ -30,9 +34,8 @@ export default function NotesForm({ note, noteID }: { note: Note | null , noteID
             toast.error('Notes cannot be empty')
             return
         }
-
+        
         setLoading(true)
-
         try {
             const response = await fetch(`/api/notes${noteID ? `?id=${noteID}` : ''}`, {
                 method: noteID ? 'PUT' : 'POST',
@@ -71,7 +74,16 @@ export default function NotesForm({ note, noteID }: { note: Note | null , noteID
             animate='animate'
             variants={variants.fadeIn}
         >
-            <Toaster position="top-center" reverseOrder={false} />
+            <Toaster 
+                position="top-center" 
+                reverseOrder={false}
+                toastOptions={{
+                    style: {
+                        backgroundColor: theme === 'dark' ? '#121212' : '#f5f5f5',
+                        color: theme === 'dark' ? '#f5f5f5' : '#333333'
+                    }
+                }}
+            />
             <input
                 value={state.title}
                 onChange={(e) => setState({ ...state, title: e.target.value })}

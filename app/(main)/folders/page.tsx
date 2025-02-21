@@ -1,3 +1,4 @@
+import Confirm from "@/components/Confirm";
 import FoldersForm from "@/components/Folders_Form";
 import FoldersLists from "@/components/Folders_Lists";
 import { getFolders } from "@/helpers/get_folders";
@@ -14,6 +15,7 @@ export default async function Folder() {
     return (
         <main className="flex flex-col gap-y-4">
             <FoldersForm />
+            <Confirm title="Delete all folders?" func="CLEAR_FOLDERS" />
             <FoldersLists folders={folders} />
         </main>
     )

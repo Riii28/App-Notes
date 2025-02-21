@@ -46,16 +46,26 @@ export async function POST(request: NextRequest) {
             })
         }
 
-        const noteData: any = noteSnap.data()
-
-        await db
+        const folderNoteRef = db
             .collection('users')
             .doc(userID)
             .collection('folders')
             .doc(folderID)
             .collection('notes')
             .doc(noteID)
-            .set(noteData)
+
+        const folderNoteSnap = await folderNoteRef.get()
+
+        if (folderNoteSnap.exists) {
+            return NextResponse.json({
+                success: false,
+                message: 'Note already exists in folder'
+            })
+        }
+
+        const noteData: any = noteSnap.data()
+
+        await folderNoteRef.set(noteData)
 
         revalidateTag('notes')
 

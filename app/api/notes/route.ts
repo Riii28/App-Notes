@@ -5,7 +5,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
-        const { title, content, createdAt, userId } = await request.json()
+        const { title, content, createdAt } = await request.json()
         const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
 
         if (!token) {
@@ -215,71 +215,111 @@ export async function DELETE(request: NextRequest) {
     try {
         const token = await getToken({ req: request, secret: process.env.JWT_SECRET })
         const searchParams = request.nextUrl.searchParams
-        const noteID = searchParams.get('id')
+        const noteID = searchParams.get("id")
 
         if (!token) {
-            return NextResponse.json({
-                success: false,
-                message: 'Unauthorized access'
+            return NextResponse.json({ 
+                success: false, 
+                message: "Unauthorized access" 
             })
         }
 
         const userID: any = token.id
-
         if (!userID) {
-            return NextResponse.json({
-                success: false,
-                message: 'User ID not found'
+            return NextResponse.json({ 
+                success: false, 
+                message: "User ID not found" 
             })
         }
 
         if (!noteID) {
-            return NextResponse.json({
-                success: false,
-                message: 'Note ID not found'
+            const notesSnapshot = await db
+                .collection("users")
+                .doc(userID)
+                .collection("notes")
+                .get()
+
+            if (notesSnapshot.empty) {
+                return NextResponse.json({ 
+                    success: false, 
+                    message: "No notes to delete" 
+                })
+            }
+
+            const batch = db.batch()
+
+            notesSnapshot.docs.forEach((doc) => batch.delete(doc.ref))
+
+            const foldersSnapshot = await db
+                .collection("users")
+                .doc(userID)
+                .collection("folders")
+                .get()
+            
+            for (const folderDoc of foldersSnapshot.docs) {
+                const notesInFolderSnapshot = await folderDoc.ref.collection("notes").get()
+                
+                if (!notesInFolderSnapshot.empty) {
+                    notesInFolderSnapshot.docs.forEach((doc) => batch.delete(doc.ref))
+                }
+            }
+
+            await batch.commit()
+
+            revalidateTag("notes")
+
+            return NextResponse.json({ 
+                success: true, 
+                message: "All notes deleted successfully!" 
             })
         }
 
         const noteRef = db
-            .collection('users')
+            .collection("users")
             .doc(userID)
-            .collection('notes')
+            .collection("notes")
             .doc(noteID)
 
-        const noteDoc = await noteRef.get();
+        const noteDoc = await noteRef.get()
+
         if (!noteDoc.exists) {
-            return NextResponse.json({
-                success: false,
-                message: 'Note not found'
-            });
+            return NextResponse.json({ 
+                success: false, 
+                message: "Note already deleted or not found" 
+            })
         }
 
-        await noteRef.delete()
+        const batch = db.batch()
+        batch.delete(noteRef)
 
         const foldersSnapshot = await db
-            .collection('users')
+            .collection("users")
             .doc(userID)
-            .collection('folders')
+            .collection("folders")
             .get()
         
         for (const folderDoc of foldersSnapshot.docs) {
-            const noteRefInFolder = folderDoc.ref.collection('notes').doc(noteID)
+            const noteRefInFolder = folderDoc.ref.collection("notes").doc(noteID)
             const noteInFolderDoc = await noteRefInFolder.get()
+
             if (noteInFolderDoc.exists) {
-                await noteRefInFolder.delete()
+                batch.delete(noteRefInFolder)
             }
         }
 
-        revalidateTag('notes')
+        await batch.commit()
 
-        return NextResponse.json({
-            success: true,
-            message: 'Note deleted successfully!'
+        revalidateTag("notes")
+
+        return NextResponse.json({ 
+            success: true, 
+            message: "Note deleted successfully!" 
         })
+
     } catch (err) {
-        return NextResponse.json({
-            success: false,
-            message: 'Internal server error'
+        return NextResponse.json({ 
+            success: false, 
+            message: "Internal server error" 
         })
     }
 }

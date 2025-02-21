@@ -5,6 +5,7 @@ import BtnGroupHome from "./Button_Group_Home";
 import BtnGroupFolder from "./Button_Group_Folders";
 import UserDropdown from "./User_Dropdown";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function Header({ title }: { title: ReactNode }) {
     const pathname = usePathname()

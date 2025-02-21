@@ -2,6 +2,8 @@
 
 import { useAppState } from "@/store/app_state"
 import FoldersLists from "./Folders_Lists"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faX } from "@fortawesome/free-solid-svg-icons"
 
 interface Folder {
     id: string
@@ -44,19 +46,20 @@ export default function FoldersDropdown({ folders }: { folders: Folder[] }) {
         selectedNote && (
             <div className="fixed w-full h-full z-50 bg-transparent">
                 <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-y-8 bg-white dark:bg-gray-800 transition-colors duration-200 w-80 p-4 rounded-md shadow-md">
-                    <h1 className="text-xl">Move to folder</h1>
-                    <div className="max-h-52 overflow-y-auto">
-                        <FoldersLists folders={folders} handleMoveFolder={handleMoveFolder} />
-                    </div>
-                    <div className="flex justify-end">
-                        <button 
+                    <div className="flex justify-between items-center">
+                        <h1 className="text-xl">Move to folder</h1>
+                        <FontAwesomeIcon 
+                            icon={faX} 
+                            size="lg"
+                            cursor='pointer'
                             onClick={() => {
                                 setSelectedNote(null)
                                 setMoveToState()
                             }}
-                        >
-                            Cancel
-                        </button>
+                        />
+                    </div>
+                    <div className="max-h-52 overflow-y-auto">
+                        <FoldersLists folders={folders} handleMoveFolder={handleMoveFolder} />
                     </div>
                 </div>
             </div>

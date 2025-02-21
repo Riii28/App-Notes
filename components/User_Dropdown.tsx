@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation"
 
 export default function UserDropdown() {
     const { data: session } = useSession()
-    const { settingState, setMoveToState } = useAppState()
+    const { settingState, setMoveToState, setConfirmState } = useAppState()
     const { toggleTheme, theme } = useTheme()
     const pathname = usePathname()
 
@@ -38,12 +38,7 @@ export default function UserDropdown() {
                         >
                             Dashboard
                         </p>
-                    ) : ''}
-                    <p 
-                        className="cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                        Settings
-                    </p>
+                    ) : null}
                     <p  
                         onClick={toggleTheme}
                         className="cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -57,7 +52,13 @@ export default function UserDropdown() {
                         >
                             Move to folder
                         </p>
-                    ) : ''}
+                    ) : null}
+                    <p
+                        className="cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                        onClick={setConfirmState}
+                    >
+                        {pathname === '/home' ? 'Clear notes' : 'Clear folders'}
+                    </p>
                 </div>
                 <div className="py-1">
                     <p

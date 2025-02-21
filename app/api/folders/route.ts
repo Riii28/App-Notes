@@ -121,64 +121,83 @@ export async function DELETE(request: NextRequest) {
         const folderID = searchParams.get('folderId')
 
         if (!token) {
-            return NextResponse.json({
-                success: false,
-                message: 'Unauthorized access'
-            })
-        }
-
-        if (!folderID) {
-            return NextResponse.json({
-                success: false,
-                message: 'Folder ID not found'
+            return NextResponse.json({ 
+                success: false, 
+                message: 'Unauthorized access' 
             })
         }
 
         const userID: any = token.id
-
         if (!userID) {
-            return NextResponse.json({
-                success: false,
-                message: 'User ID not found'
+            return NextResponse.json({ 
+                success: false, 
+                message: 'User ID not found' 
             })
         }
 
-        const folderRef = db
+        const userFoldersRef = db
             .collection('users')
             .doc(userID)
             .collection('folders')
-            .doc(folderID)
 
-        const folderDoc = await folderRef.get()
+        const batch = db.batch()
 
-        if (!folderDoc.exists) {
-            return NextResponse.json({
-                success: false,
-                message: 'Folder not found'
+        if (folderID) {
+            const folderRef = userFoldersRef.doc(folderID)
+            const folderDoc = await folderRef.get()
+
+            if (!folderDoc.exists) {
+                return NextResponse.json({ 
+                    success: false, 
+                    message: 'Folder not found' 
+                })
+            }
+
+            const notesSnapshot = await folderRef.collection('notes').get()
+            notesSnapshot.forEach((doc) => batch.delete(doc.ref))
+
+            batch.delete(folderRef)
+            await batch.commit()
+
+            revalidateTag('folders')
+
+            return NextResponse.json({ 
+                success: true, 
+                message: 'Folder deleted!' 
             })
         }
 
-        const notesRef = folderRef.collection('notes')
-        const notesSnapshot = await notesRef.get()
-        const batch = db.batch()
+        const foldersSnapshot = await userFoldersRef.get()
 
-        notesSnapshot.forEach((doc) => {
-            batch.delete(doc.ref)
+        if (foldersSnapshot.empty) {
+            return NextResponse.json({ 
+                success: false, 
+                message: 'No folders to delete' 
+            })
+        }
+
+        foldersSnapshot.docs.forEach((folderDoc) => {
+            const folderRef = folderDoc.ref
+            batch.delete(folderRef)
+
+            folderRef.collection('notes').get().then((notesSnapshot) => {
+                notesSnapshot.forEach((noteDoc) => batch.delete(noteDoc.ref))
+            })
         })
 
-        batch.delete(folderRef)
-        await batch.commit()  
+        await batch.commit()
 
         revalidateTag('folders')
 
-        return NextResponse.json({
-            success: true,
-            message: 'Folder deleted!'
+        return NextResponse.json({ 
+            success: true, 
+            message: 'All folders and notes deleted!' 
         })
+
     } catch (err) {
-        return NextResponse.json({
-            success: false,
-            message: 'Internal server error'
+        return NextResponse.json({ 
+            success: false, 
+            message: 'Internal server error' 
         })
     }
 }

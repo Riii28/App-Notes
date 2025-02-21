@@ -4,10 +4,12 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { useTheme } from "@/store/theme"
 import { motion } from "framer-motion"
 import { variants } from "@/utils/transitions"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"
 
 interface Data {
     email: string
@@ -17,6 +19,7 @@ interface Data {
 export default function SignInForm() {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
+    const [showPassword, setShowPassword] = useState<boolean>(false)
     const router = useRouter()
     const { register, handleSubmit, reset, formState: { errors } } = useForm<Data>()
     const { syncTheme } = useTheme()
@@ -71,19 +74,31 @@ export default function SignInForm() {
                     }
                 })}
             />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
 
+            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+            
             <label htmlFor="password">Password:</label>
-            <input 
-                type="password" 
-                id="password"
-                placeholder="Your password"
-                className="px-2 py-1 rounded-md outline-none text-dark-300"
-                disabled={loading}
-                {...register("password", { 
-                    required: "Password is required" 
-                })}
-            />
+            <div className="relative">
+                <input 
+                    type={showPassword ? 'text' : 'password'} 
+                    id="password"
+                    placeholder="Your password"
+                    className="px-2 py-1 rounded-md outline-none text-dark-300 w-full"
+                    {...register("password", {
+                        required: "Password is required",
+                        minLength: {
+                            value: 6,
+                            message: "Password must be at least 6 characters",
+                        },
+                    })}
+                />
+                <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm bg-white p-1"
+                    cursor='pointer'
+                />
+            </div>
             {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
 
             <p className="text-sm mt-4">Not registered? <Link className="text-blue-600" href={'/auth/sign-up'}>create account</Link></p>

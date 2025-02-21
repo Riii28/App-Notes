@@ -13,6 +13,8 @@ interface AppState {
     setSelectedNote: (id: string | null) => void
     deleteFolderState: boolean
     setDeleteFolderState: () => void
+    confirmState: boolean
+    setConfirmState: () => void
 }
 
 export const useAppState = create<AppState>((set) => ({
@@ -32,5 +34,8 @@ export const useAppState = create<AppState>((set) => ({
     setSelectedNote: (id) => set({ selectedNote: id }),
 
     deleteFolderState: false,
-    setDeleteFolderState: () => set((state) => ({ deleteFolderState: !state.deleteFolderState }))
+    setDeleteFolderState: () => set((state) => ({ deleteFolderState: !state.deleteFolderState })),
+
+    confirmState: false,
+    setConfirmState: () => set((state) => ({ confirmState: !state.confirmState, settingState: false }))
 }))

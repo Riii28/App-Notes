@@ -4,7 +4,7 @@ export async function getDetailFolder(id: string) {
     try {
         const cookieStore = cookies()
 
-        const response: Response = await fetch(`http://localhost:3000/api/folders/details?id=${id}`, {
+        const response: Response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/folders/details?id=${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

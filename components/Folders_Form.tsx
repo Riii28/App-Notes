@@ -64,13 +64,13 @@ export default function FoldersForm() {
                     <div className="flex justify-end gap-x-6 text-dark-300 dark:text-light-100">
                         <button
                             onClick={setFolderFormState}
-                            className="px-4 py-1 bg-400 rounded-md active:scale-95 dark:bg-dark-200"
+                            className="active:scale-95"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleAddFolder}
-                            className="px-4 py-1 bg-100 rounded-md active:scale-95"
+                            className="active:scale-95"
                         >
                             Add
                         </button>

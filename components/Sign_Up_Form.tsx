@@ -51,6 +51,7 @@ export default function SignUpForm() {
 
             reset()
             router.push('/auth/sign-in')
+            setMessage(result.message)
         } catch (err: any) {
             console.error(err.message)
         } finally {
@@ -120,7 +121,7 @@ export default function SignUpForm() {
                 <FontAwesomeIcon
                     icon={showPassword ? faEyeSlash : faEye}
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm bg-white p-1"
                     cursor='pointer'
                 />
             </div>
@@ -140,18 +141,21 @@ export default function SignUpForm() {
                     })}
                 />
                 <FontAwesomeIcon
-                    icon={showPassword ? faEyeSlash : faEye}
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm"
+                    icon={showConfirmPassword ? faEyeSlash : faEye}
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm bg-white p-1"
                     cursor='pointer'
                 />
             </div>
+
+            {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword.message}</span>}
 
             <span className="text-sm mt-4">Have registered? <Link className="text-blue-600" href={'/auth/sign-in'}>sign in</Link></span>
 
             <button className="mt-4 rounded-md px-2 py-1 bg-100">
                 {loading ? 'Loading...' : 'Sign up'}
             </button>
+
             <span className="text-sm">{message}</span>
         </motion.form>
     )

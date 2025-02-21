@@ -7,9 +7,8 @@ import UserDropdown from "./User_Dropdown";
 import { useAppState } from "@/store/app_state";
 import Link from "next/link";
 
-
 export default function BtnGroupFolder() {
-    const { setDeleteFolderState } = useAppState()
+    const { setDeleteFolderState, setSettingState } = useAppState()
 
     return (
         <div className="flex gap-x-5 justify-end items-center">
@@ -22,6 +21,16 @@ export default function BtnGroupFolder() {
                     size="lg"
                 />
             </button>
+            <button
+                onClick={setSettingState}
+            >
+                <FontAwesomeIcon
+                    cursor='pointer'
+                    icon={faGear} 
+                    size="lg"
+                />
+            </button>
+
         </div>
     )
 }

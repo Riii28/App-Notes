@@ -1,11 +1,10 @@
 'use client'
 
 import { useAppState } from "@/store/app_state"
-import { faTrash, faCheckToSlot, faListCheck, faCheck, faL } from "@fortawesome/free-solid-svg-icons"
+import { faTrash, faCheck } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 import toast from "react-hot-toast"
 import { motion } from "framer-motion"
 import { variants } from "@/utils/transitions"
@@ -54,9 +53,12 @@ export default function NotesLists({ notes }: { notes: Notes[] }) {
 
     return (
         <div className="flex flex-col gap-y-4">
-            {notes?.length > 0 ? (
-                notes?.map((note: Notes) => (
-                    <div
+            {notes && notes.length > 0 ? (
+                notes.map((note: Notes) => (
+                    <motion.div
+                        initial="initial"
+                        animate="animate"
+                        variants={variants.fadeIn}
                         key={note.id} 
                         className="flex "
                     >
@@ -99,7 +101,7 @@ export default function NotesLists({ notes }: { notes: Notes[] }) {
                                 />
                             </motion.div>
                         )}
-                    </div>
+                    </motion.div>
                 ))                
             ) : (
                 <h1 className="text-xl text-dark-300 font-bold">No notes</h1>

@@ -9,7 +9,6 @@ import toast, { Toaster } from "react-hot-toast"
 import Loading from "./Spinner"
 import { motion } from "framer-motion"
 import { variants } from "@/utils/transitions"
-import { useAppState } from "@/store/app_state"
 import { useTheme } from "@/store/theme"
 
 interface Note {
@@ -61,6 +60,7 @@ export default function NotesForm({ note, noteID }: { note: Note | null , noteID
 
             router.push('/home')
         } catch (err) {
+            console.error(err)
             toast.error('Check your connections')
             return
         } finally {

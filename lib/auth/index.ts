@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
+import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { compare } from "bcrypt"
 import { db } from '@/lib/firebase/admin'
@@ -51,6 +51,7 @@ export const authOptions: NextAuthOptions = {
           }
   
         } catch (err) {
+          console.error(err)
           throw new Error('Error fetching user data')
         }
       }

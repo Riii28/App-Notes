@@ -21,7 +21,7 @@ export default function FoldersForm() {
             })
 
             if (!response.ok) {
-                console.log(response)
+                toast.error('Check your connection')
                 return
             }
 

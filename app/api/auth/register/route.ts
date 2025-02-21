@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
             success: true, 
             message: 'Register success' 
         })
-    } catch (error) {
+    } catch (err) {
+        console.error(err)
         return NextResponse.json({ 
             success: false, 
             message: 'Register failed' 

@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
             data: theme
         })
     } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error',
@@ -91,6 +92,7 @@ export async function POST(request: NextRequest) {
             message: 'Theme updated successfully'
         })
     } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error'

@@ -4,6 +4,7 @@ import { useAppState } from "@/store/app_state"
 import FoldersLists from "./Folders_Lists"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faX } from "@fortawesome/free-solid-svg-icons"
+import toast from "react-hot-toast"
 
 interface Folder {
     id: string
@@ -26,19 +27,21 @@ export default function FoldersDropdown({ folders }: { folders: Folder[] }) {
             })
 
             if (!response.ok) {
+                toast.error('Check your connection')
                 return
             }
 
             const result = await response.json()
 
             if (!result.success) {
+                toast.error(result.message)
                 return
             }
 
             setSelectedNote(null)
             setMoveToState()
         } catch (err) {
-
+            console.error("Error handle move folder:", err)
         }
     }
 

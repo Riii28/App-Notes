@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faGear } from "@fortawesome/free-solid-svg-icons";
 import { useAppState } from "@/store/app_state";
 
-
 export default function BtnGroupHome() {
     const { setSelectState, setSettingState } = useAppState()
 

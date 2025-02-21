@@ -5,7 +5,7 @@ import BtnGroupHome from "./Button_Group_Home";
 import BtnGroupFolder from "./Button_Group_Folders";
 import UserDropdown from "./User_Dropdown";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
+import Image from "next/image";
 
 export default function Header({ title }: { title: ReactNode }) {
     const pathname = usePathname()
@@ -18,7 +18,7 @@ export default function Header({ title }: { title: ReactNode }) {
             </div>
             <div className="flex flex-col">
                 <div className="flex-1">
-                    <img
+                    <Image
                         className="mx-auto aspect-square object-cover rounded-[50%] bg-300 p-2"
                         src='/profile-default.png'
                         width={55}

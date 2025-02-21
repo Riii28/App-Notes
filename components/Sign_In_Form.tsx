@@ -44,7 +44,7 @@ export default function SignInForm() {
             router.push('/home')
             syncTheme()
         } catch (err) {
-            throw new Error('Error during sign-in')
+            console.error(err)
         } finally {
             setLoading(false)
         }

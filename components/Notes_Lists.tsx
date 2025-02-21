@@ -44,10 +44,9 @@ export default function NotesLists({ notes }: { notes: Notes[] }) {
             setSelectState()
             router.refresh()
         } catch (err) {
+            console.error(err)
             toast.error('Check your connection and try again')
             return
-        } finally {
-            
         }
     }
 

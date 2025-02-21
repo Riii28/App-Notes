@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
             message: 'New folder added!'
         })
     } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error!'
@@ -107,6 +108,7 @@ export async function GET(request: NextRequest) {
             data: folders
         })
     } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error'
@@ -195,6 +197,7 @@ export async function DELETE(request: NextRequest) {
         })
 
     } catch (err) {
+        console.error(err)
         return NextResponse.json({ 
             success: false, 
             message: 'Internal server error' 

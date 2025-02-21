@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
             message: 'Note added successfully!'
         })
     } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error'
@@ -75,42 +76,35 @@ export async function GET(request: NextRequest) {
         }
 
         if (noteID) {
-            try {
-                const noteDoc = await db
-                    .collection('users')
-                    .doc(userID)
-                    .collection('notes')
-                    .doc(noteID)
-                    .get()
-                    
-                if (!noteDoc.exists) {
-                    return NextResponse.json({
-                        success: false,
-                        message: 'Note not found'
-                    })
-                }
-        
-                return NextResponse.json({ 
-                    success: true, 
-                    message: 'Success to fetch', 
-                    data: {
-                        id: noteDoc.id, 
-                        ...noteDoc.data()
-                    } 
-                })    
-            } catch (err) {
+            const noteDoc = await db
+                .collection('users')
+                .doc(userID)
+                .collection('notes')
+                .doc(noteID)
+                .get()
+                
+            if (!noteDoc.exists) {
                 return NextResponse.json({
                     success: false,
-                    message: 'Internal server error'
+                    message: 'Note not found'
                 })
             }
+        
+            return NextResponse.json({ 
+                success: true, 
+                message: 'Success to fetch', 
+                data: {
+                    id: noteDoc.id, 
+                    ...noteDoc.data()
+                } 
+            })    
         }
 
         const notesSnapshot = await db
             .collection('users')
             .doc(userID)
             .collection('notes')
-            .get();
+            .get()
     
         const notes = notesSnapshot.docs.map((doc) => ({
             id: doc.id,
@@ -124,7 +118,8 @@ export async function GET(request: NextRequest) {
             message: 'Success to fetch all data',
             data: notes
         })   
-    } catch {
+    } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error'
@@ -204,6 +199,7 @@ export async function PUT(request: NextRequest) {
             message: 'Note updated!'
         })
     } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error'
@@ -317,6 +313,7 @@ export async function DELETE(request: NextRequest) {
         })
 
     } catch (err) {
+        console.error("Error clearing notes:", err)
         return NextResponse.json({ 
             success: false, 
             message: "Internal server error" 

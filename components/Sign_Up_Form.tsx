@@ -52,8 +52,8 @@ export default function SignUpForm() {
             reset()
             router.push('/auth/sign-in')
             setMessage(result.message)
-        } catch (err: any) {
-            console.error(err.message)
+        } catch (err) {
+            console.error(err)
         } finally {
             setLoading(false)
         }

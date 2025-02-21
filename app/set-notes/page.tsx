@@ -1,7 +1,5 @@
 import NotesForm from "@/components/Notes_Form";
 import { notFound } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { getNotes } from "@/helpers/get_notes";
 
 export default async function SetNotes({ searchParams }: { searchParams: Promise<{ id?: string }> }) {

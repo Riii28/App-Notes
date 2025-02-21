@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
             message: 'Notes added to folder'
         })
     } catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             message: 'Internal server error'

@@ -1,11 +1,8 @@
 'use client'
 
-import { ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckSquare, faEdit, faGear, faSearch } from "@fortawesome/free-solid-svg-icons";
-import UserDropdown from "./User_Dropdown";
+import { faCheckSquare, faGear } from "@fortawesome/free-solid-svg-icons";
 import { useAppState } from "@/store/app_state";
-import Link from "next/link";
 
 export default function BtnGroupFolder() {
     const { setDeleteFolderState, setSettingState } = useAppState()

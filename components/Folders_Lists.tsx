@@ -14,7 +14,7 @@ interface Folder {
     createdAt: string
 }
 
-export default function FoldersLists({ folders, handleMoveFolder }: { folders: Folder[], handleMoveFolder?: Function }) {
+export default function FoldersLists({ folders, handleMoveFolder }: { folders: Folder[], handleMoveFolder?: any }) {
     const { deleteFolderState, setDeleteFolderState} = useAppState()
     const { push, refresh } = useRouter()
 
@@ -26,12 +26,14 @@ export default function FoldersLists({ folders, handleMoveFolder }: { folders: F
             })
 
             if (!response.ok) {
+                toast.error('Check your connection')
                 return
             }
 
             const result = await response.json()
 
             if (!result.success) {
+                toast.error(result.message)
                 return
             }
 
@@ -39,7 +41,7 @@ export default function FoldersLists({ folders, handleMoveFolder }: { folders: F
             setDeleteFolderState()
             refresh()
         } catch (err) {
-
+            console.error("Error clearing notes:", err)
         }
     }
     

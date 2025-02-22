@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import NotesLists from "@/components/Notes_Lists";
 import { getNotes } from "@/helpers/get_notes";
 import FoldersDropdown from "@/components/Folders_Dropdown";

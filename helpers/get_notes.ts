@@ -2,18 +2,16 @@ import { cookies } from "next/headers";
 
 export async function getNotes(noteID?: string | null) {
     const cookieStore = cookies()
+    const cookieHeader = (await cookieStore).toString()
     
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notes${noteID ? `?id=${noteID}` : ''}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                'Cookie': (await cookieStore).toString()
+                'Cookie': cookieHeader
             },
-            cache: 'force-cache',
-            next: {
-                tags: ['notes']
-            }
+            cache: 'no-store',
         })
 
         if (!response.ok) {
@@ -28,7 +26,6 @@ export async function getNotes(noteID?: string | null) {
 
         return result.data
     } catch (err) {
-        console.error("Error fetching notes:", err)
-        return
+        console.error(err)
     }
 }

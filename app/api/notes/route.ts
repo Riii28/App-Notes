@@ -1,6 +1,5 @@
 import { db } from "@/lib/firebase/admin";
 import { getToken } from "next-auth/jwt";
-import { revalidateTag } from "next/cache";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -37,8 +36,6 @@ export async function POST(request: NextRequest) {
             .doc(userID)
             .collection('notes')
             .add(noteData)
-
-        revalidateTag('notes')
 
         return NextResponse.json({
             success: true,
@@ -110,8 +107,6 @@ export async function GET(request: NextRequest) {
             id: doc.id,
             ...doc.data()
         }))
-
-        revalidateTag('notes')
     
         return NextResponse.json({
             success: true,
@@ -191,8 +186,6 @@ export async function PUT(request: NextRequest) {
                 await noteRefInFolder.update({ title, content, createdAt })
             }
         }
-
-        revalidateTag('notes')
                     
         return NextResponse.json({
             success: true,
@@ -262,8 +255,6 @@ export async function DELETE(request: NextRequest) {
 
             await batch.commit()
 
-            revalidateTag("notes")
-
             return NextResponse.json({ 
                 success: true, 
                 message: "All notes deleted successfully!" 
@@ -304,8 +295,6 @@ export async function DELETE(request: NextRequest) {
         }
 
         await batch.commit()
-
-        revalidateTag("notes")
 
         return NextResponse.json({ 
             success: true, 

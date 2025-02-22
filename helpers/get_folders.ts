@@ -3,17 +3,15 @@ import { cookies } from "next/headers"
 export async function getFolders() {
     try {
         const cookieStore = cookies()
+        const cookieHeader = (await cookieStore).toString()
 
         const response: Response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/folders`, {
             method: 'GET',
             headers: { 
                 'Content-Type': 'application/json',
-                'Cookie': (await cookieStore).toString()
+                'Cookie': cookieHeader
             },
-            cache: 'force-cache',
-            next: {
-                tags: ['folders']
-            }
+            cache: 'no-store',
         })
 
         if (!response.ok) {

@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/lib/firebase/admin";
 import { getToken } from "next-auth/jwt";
-import { revalidateTag } from "next/cache";
 
 export async function POST(request: NextRequest) {
     try {
@@ -55,8 +54,6 @@ export async function POST(request: NextRequest) {
             .doc(userID)
             .collection('folders')
             .add(folderData)
-
-        revalidateTag('folders')
 
         return NextResponse.json({
             success: true,
@@ -161,8 +158,6 @@ export async function DELETE(request: NextRequest) {
             batch.delete(folderRef)
             await batch.commit()
 
-            revalidateTag('folders')
-
             return NextResponse.json({ 
                 success: true, 
                 message: 'Folder deleted!' 
@@ -188,8 +183,6 @@ export async function DELETE(request: NextRequest) {
         })
 
         await batch.commit()
-
-        revalidateTag('folders')
 
         return NextResponse.json({ 
             success: true, 

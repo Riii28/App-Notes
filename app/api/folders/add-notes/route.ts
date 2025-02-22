@@ -1,6 +1,5 @@
 import { db } from "@/lib/firebase/admin";
 import { getToken } from "next-auth/jwt";
-import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -66,8 +65,6 @@ export async function POST(request: NextRequest) {
         const noteData: any = noteSnap.data()
 
         await folderNoteRef.set(noteData)
-
-        revalidateTag('notes')
 
         return NextResponse.json({
             success: true,

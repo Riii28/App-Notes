@@ -1,16 +1,13 @@
+'use client'
+
 import NotesForm from "@/components/Notes_Form";
-import { notFound } from "next/navigation";
-import { getNotes } from "@/app/helpers/get_notes";
+import { useSearchParams } from "next/navigation";
 
-export default async function SetNotes({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
-    const noteID = (await searchParams).id || null
-    const note = await getNotes(noteID)
-
-    if (noteID && !note) {
-        notFound()
-    }
+export default function SetNotes() {
+    const searchParams = useSearchParams()
+    const noteID: any = searchParams.get('id')
     
     return (
-        <NotesForm note={note} noteID={noteID}/>
+        <NotesForm noteID={noteID}/>
     )
 }

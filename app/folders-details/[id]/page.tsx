@@ -40,7 +40,7 @@ export default function FolderDetails() {
             }
         }
         getDetailsFolders(id)
-    }, [])
+    }, [id])
 
     return (
         <NotesLists notes={notes}/>

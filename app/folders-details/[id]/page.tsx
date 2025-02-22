@@ -1,5 +1,5 @@
 import NotesLists from "@/components/Notes_Lists"
-import { getDetailFolder } from "@/helpers/get_details_folders"
+import { getDetailFolder } from "@/app/helpers/get_details_folders"
 
 interface Note {
     id: string

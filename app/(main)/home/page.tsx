@@ -1,9 +1,9 @@
 export const dynamic = 'force-dynamic';
 
 import NotesLists from "@/components/Notes_Lists";
-import { getNotes } from "@/helpers/get_notes";
+import { getNotes } from "@/app/helpers/get_notes";
 import FoldersDropdown from "@/components/Folders_Dropdown";
-import { getFolders } from "@/helpers/get_folders";
+import { getFolders } from "@/app/helpers/get_folders";
 import Confirm from "@/components/Confirm";
 
 interface Note {
